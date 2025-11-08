@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import { conectarDB } from "./backend/config/db.js";
+import conectarDB from "./backend/config/db.js";
 import bebidasRoutes from "./backend/routes/bebidasRoutes.js";
 import usuariosRoutes from "./backend/routes/usuariosRoutes.js";
 import pedidosRoutes from "./backend/routes/pedidosRoutes.js";
