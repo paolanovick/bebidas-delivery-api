@@ -1,6 +1,5 @@
 // components/BebidasList.jsx
 import React from "react";
-import BebidasCard from "./BebidasCard";
 
 const BebidasList = ({ bebidas, onEdit, onDelete }) => {
   if (bebidas.length === 0) {
@@ -17,20 +16,51 @@ const BebidasList = ({ bebidas, onEdit, onDelete }) => {
   }
 
   return (
-    <div>
+    <div className="mt-6 overflow-x-auto">
       <h3 className="text-2xl font-bold text-[#04090C] mb-4">
         Catálogo de Bebidas ({bebidas.length})
       </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {bebidas.map((bebida) => (
-          <BebidasCard
-            key={bebida._id}
-            bebida={bebida}
-            onEdit={onEdit}
-            onDelete={onDelete}
-          />
-        ))}
-      </div>
+
+      <table className="min-w-full bg-white border border-[#CDC7BD] rounded-xl shadow-lg">
+        <thead className="bg-[#590707] text-white">
+          <tr>
+            <th className="py-3 px-4 text-left">Nombre</th>
+            <th className="py-3 px-4 text-left">Categoría</th>
+            <th className="py-3 px-4 text-left">Precio</th>
+            <th className="py-3 px-4 text-left">Stock</th>
+            <th className="py-3 px-4 text-left">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {bebidas.map((b) => (
+            <tr
+              key={b._id}
+              className="border-b hover:bg-[#F2ECE4] transition-colors"
+            >
+              <td className="py-3 px-4">{b.nombre}</td>
+              <td className="py-3 px-4">{b.categoria}</td>
+              <td className="py-3 px-4">${b.precio}</td>
+              <td className="py-3 px-4">{b.stock ?? "-"}</td>
+
+              <td className="py-3 px-4 flex gap-2">
+                <button
+                  onClick={() => onEdit(b)}
+                  className="px-3 py-1 rounded-lg bg-[#590707] text-white hover:bg-[#A30404] transition"
+                >
+                  Editar
+                </button>
+                <button
+                  onClick={() => onDelete(b._id)}
+                  className="px-3 py-1 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
+                >
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
