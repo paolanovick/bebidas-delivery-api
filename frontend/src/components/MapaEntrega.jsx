@@ -30,7 +30,8 @@ export default function MapaEntrega({ direccion, onLocationSelect }) {
     try {
       // ⬇️ CAMBIO AQUÍ: usa la misma base que en api.js
       const API_URL =
-        process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+        import.meta.env.VITE_API_URL || "https://el-danes-api.onrender.com/api";
+
       const url = `${API_URL}/geo/buscar?q=${encodeURIComponent(direccion)}`;
 
       console.log("🔍 Buscando en:", url); // ⬅️ Debug

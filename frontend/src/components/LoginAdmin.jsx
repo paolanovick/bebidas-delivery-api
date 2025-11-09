@@ -14,11 +14,14 @@ const LoginAdmin = () => {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/usuarios/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, contrasena }),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/usuarios/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, contrasena }),
+        }
+      );
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.mensaje || "Error al iniciar sesión");
