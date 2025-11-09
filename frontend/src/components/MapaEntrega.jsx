@@ -23,26 +23,19 @@ export default function MapaEntrega({ direccion, onLocationSelect }) {
     lng: -59.13317,
   });
 
-  // ✅ CORREGIDO: URL correcta
+  // ✅ AHORA TOMA LA URL SEGÚN EL ENTORNO (LOCAL / VERCEL)
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const buscarDireccion = useCallback(async () => {
     if (!direccion || direccion.length < 3) return;
 
     try {
-      // ⬇️ CAMBIO AQUÍ: usa la misma base que en api.js
-      const API_URL =
-        import.meta.env.VITE_API_URL || "https://el-danes-api.onrender.com/api";
-
       const url = `${API_URL}/geo/buscar?q=${encodeURIComponent(direccion)}`;
 
-      console.log("🔍 Buscando en:", url); // ⬅️ Debug
+      console.log("🔍 Buscando en:", url);
 
       const res = await fetch(url);
-
-      // ✅ Validar respuesta antes de parsear
-      if (!res.ok) {
-        console.error("❌ Error HTTP:", res.status);
-        return;
-      }
+      if (!res.ok) return;
 
       const data = await res.json();
 
@@ -55,7 +48,7 @@ export default function MapaEntrega({ direccion, onLocationSelect }) {
     } catch (err) {
       console.error("❌ Error al buscar dirección:", err);
     }
-  }, [direccion, onLocationSelect]);
+  }, [direccion, API_URL, onLocationSelect]);
 
   useEffect(() => {
     buscarDireccion();

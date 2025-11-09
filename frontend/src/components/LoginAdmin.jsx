@@ -15,7 +15,7 @@ const LoginAdmin = () => {
 
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/usuarios/login`,
+        `${process.env.REACT_APP_API_URL}/usuarios/login`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
