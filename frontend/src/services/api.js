@@ -1,10 +1,11 @@
 // src/services/api.js
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = "https://el-danes-api.onrender.com";
 
-const API_URL_BEBIDAS = `${BASE_URL}/bebidas`;
-const API_URL_USUARIOS = `${BASE_URL}/usuarios`;
-const API_URL_PEDIDOS = `${BASE_URL}/pedidos`;
-const API_URL_HORARIOS = `${BASE_URL}/horarios`;
+const API_URL_BEBIDAS = `${BASE_URL}/api/bebidas`;
+const API_URL_USUARIOS = `${BASE_URL}/api/usuarios`;
+const API_URL_PEDIDOS = `${BASE_URL}/api/pedidos`;
+const API_URL_HORARIOS = `${BASE_URL}/api/horarios`;
+
 
 
 
