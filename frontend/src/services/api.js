@@ -1,17 +1,18 @@
 // src/services/api.js
+// src/services/api.js
 
-// URLs base
-const API_URL_BEBIDAS = "http://localhost:5000/api/bebidas";
-const API_URL = "http://localhost:5000/api/bebidas";
+// 🌍 URL base de producción
+const BASE_URL = "https://el-danes-api.onrender.com/api";
 
-const API_URL_USUARIOS = "http://localhost:5000/api/usuarios";
-const API_URL_PEDIDOS = "http://localhost:5000/api/pedidos";
-const API_URL_HORARIOS = "http://localhost:5000/api/horarios";
-
-
+// ENDPOINTS
+const API_URL_BEBIDAS = `${BASE_URL}/bebidas`;
+const API_URL_USUARIOS = `${BASE_URL}/usuarios`;
+const API_URL_PEDIDOS = `${BASE_URL}/pedidos`;
+const API_URL_HORARIOS = `${BASE_URL}/horarios`;
 
 // Obtener token del localStorage
 const getToken = () => localStorage.getItem("token");
+
 
 /* ============================
    FUNCIONES PARA BEBIDAS
@@ -29,7 +30,7 @@ export const getBebidas = async () => {
 export const agregarBebida = async (bebida) => {
   const token = localStorage.getItem("token");
 
-  const res = await fetch(API_URL, {
+  const res = await fetch(API_URL_BEBIDAS, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
