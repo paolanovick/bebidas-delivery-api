@@ -74,10 +74,9 @@ export default function MenuBebidas() {
       {/* SIDEBAR IZQUIERDO */}
       <aside
         className={`fixed md:static inset-y-0 left-0 w-64 bg-white border-r border-[#CDC7BD] p-6 z-40
-        shadow-[0_8px_24px_rgba(0,0,0,0.08)] transform transition-transform duration-300
-        ${
-          menuAbierto ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        }`}
+  shadow-[0_8px_24px_rgba(0,0,0,0.08)] transform transition-transform duration-300
+  ${menuAbierto ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+  overflow-y-auto max-h-screen`}
       >
         <div className="absolute top-0 left-0 h-1 w-full bg-[#CDC7BD]" />
 
