@@ -15,12 +15,26 @@ conectarDB();
 const app = express();
 app.use(
   cors({
-    origin: "https://bebidas-delivery-api.vercel.app",
-    methods: "GET,POST,PUT,DELETE",
-    allowedHeaders: "Content-Type, Authorization",
+    origin: function (origin, callback) {
+      // Permitir requests sin origin (Postman, apps móviles)
+      if (!origin) return callback(null, true);
+
+      // Permitir localhost para desarrollo
+      if (origin.includes("localhost")) return callback(null, true);
+
+      // Permitir cualquier subdominio de vercel.app
+      if (origin.endsWith(".vercel.app")) return callback(null, true);
+
+      // Bloquear otros orígenes
+      callback(new Error("No permitido por CORS"));
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
+
+
 
 app.use(express.json());
 
