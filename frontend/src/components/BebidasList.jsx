@@ -24,6 +24,7 @@ const BebidasList = ({ bebidas, onEdit, onDelete }) => {
       <table className="min-w-full bg-white border border-[#CDC7BD] rounded-xl shadow-lg">
         <thead className="bg-[#590707] text-white">
           <tr>
+            <th className="py-3 px-4 text-left">Imagen</th>
             <th className="py-3 px-4 text-left">Nombre</th>
             <th className="py-3 px-4 text-left">Categoría</th>
             <th className="py-3 px-4 text-left">Precio</th>
@@ -36,13 +37,34 @@ const BebidasList = ({ bebidas, onEdit, onDelete }) => {
           {bebidas.map((b) => (
             <tr
               key={b._id}
-              className="border-b hover:bg-[#F2ECE4] transition-colors"
+              className="border-b hover:bg-[#F2ECE4] transition-colors text-[#04090C]"
             >
-              <td className="py-3 px-4">{b.nombre}</td>
+              {/* Imagen */}
+              <td className="py-3 px-4">
+                <img
+                  src={b.imagen}
+                  alt={b.nombre}
+                  className="w-14 h-14 object-cover rounded-lg border border-[#CDC7BD]"
+                  onError={(e) => {
+                    e.currentTarget.src =
+                      "https://placehold.co/80x80/CDC7BD/04090C?text=Sin+Img";
+                  }}
+                />
+              </td>
+
+              {/* Nombre */}
+              <td className="py-3 px-4 font-semibold">{b.nombre}</td>
+
+              {/* Categoría */}
               <td className="py-3 px-4">{b.categoria}</td>
+
+              {/* Precio */}
               <td className="py-3 px-4">${b.precio}</td>
+
+              {/* Stock */}
               <td className="py-3 px-4">{b.stock ?? "-"}</td>
 
+              {/* Acciones */}
               <td className="py-3 px-4 flex gap-2">
                 <button
                   onClick={() => onEdit(b)}
