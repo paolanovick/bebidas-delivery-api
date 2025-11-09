@@ -15,7 +15,7 @@ conectarDB();
 const app = express();
 app.use(
   cors({
-    origin: "*",
+    origin: "https://bebidas-delivery-api.vercel.app",
     credentials: true,
   })
 );
