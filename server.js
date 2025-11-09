@@ -13,7 +13,18 @@ dotenv.config();
 conectarDB();
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "https://bebidas-delivery-api.vercel.app",
+      "https://bebidas-delivery-6u27qxibz-paola-novicks-projects.vercel.app",
+    ],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 // Rutas API
