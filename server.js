@@ -16,6 +16,8 @@ const app = express();
 app.use(
   cors({
     origin: "https://bebidas-delivery-api.vercel.app",
+    methods: "GET,POST,PUT,DELETE",
+    allowedHeaders: "Content-Type, Authorization",
     credentials: true,
   })
 );
