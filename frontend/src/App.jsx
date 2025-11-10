@@ -1,14 +1,13 @@
-// src/App.jsx
 import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 
-// Componentes
 import Navbar from "./components/Navbar";
 import BebidasForm from "./components/BebidasForm";
 import BebidasList from "./components/BebidasList";
@@ -19,7 +18,7 @@ import LoginAdmin from "./components/LoginAdmin";
 import MenuBebidas from "./components/MenuBebidas";
 import AdminPedidos from "./pages/AdminPedidos";
 import Pedido from "./pages/Pedido";
-import { CarritoProvider } from "./context/CarritoContext"; // ✅ IMPORTAR// <-- AGREGA ESTA IMPORTACIÓN
+import { CarritoProvider } from "./context/CarritoContext";
 import { BebidasProvider } from "./context/BebidasContext";
 import Inicio from "./pages/Inicio";
 import Footer from "./components/Footer";
@@ -31,8 +30,11 @@ import {
   eliminarBebida,
 } from "./services/api";
 
-function App() {
+function AppContent() {
   const { usuario, loading } = useAuth();
+  const location = useLocation(); // ✅ ahora sí funciona
+  const ocultarFooter = location.pathname.startsWith("/admin");
+
   const [bebidas, setBebidas] = useState([]);
   const [editing, setEditing] = useState(null);
 
@@ -87,99 +89,104 @@ function App() {
     );
   }
 
- return (
-   <Router>
-     <BebidasProvider>
-       <CarritoProvider>
-         <div className="min-h-screen bg-[#04090C] text-[#FFFFFF] font-sans">
-           <Navbar />
+  return (
+    <div className="min-h-screen bg-[#04090C] text-white">
+      <Navbar />
 
-           <div className="max-w-7xl mx-auto p-6">
-             <Routes>
-               <Route path="/" element={<Inicio />} />
-               <Route path="/inicio" element={<Inicio />} />
+      <div className="max-w-7xl mx-auto p-6">
+        <Routes>
+          <Route path="/" element={<Inicio />} />
+          <Route path="/inicio" element={<Inicio />} />
+          <Route
+            path="/login"
+            element={usuario ? <Navigate to="/tienda" /> : <Login />}
+          />
+          <Route
+            path="/registro"
+            element={usuario ? <Navigate to="/tienda" /> : <Registro />}
+          />
+          <Route
+            path="/login-admin"
+            element={
+              usuario && usuario.rol === "admin" ? (
+                <Navigate to="/admin" />
+              ) : (
+                <LoginAdmin />
+              )
+            }
+          />
+          <Route
+            path="/mis-pedidos"
+            element={
+              usuario && usuario.rol !== "admin" ? (
+                <MisPedidos />
+              ) : (
+                <Navigate to="/tienda" />
+              )
+            }
+          />
 
-               <Route
-                 path="/login"
-                 element={usuario ? <Navigate to="/tienda" /> : <Login />}
-               />
-               {/* REGISTRO */}
-               <Route
-                 path="/registro"
-                 element={usuario ? <Navigate to="/tienda" /> : <Registro />}
-               />
-               {/* LOGIN ADMIN */}
-               <Route
-                 path="/login-admin"
-                 element={
-                   usuario && usuario.rol === "admin" ? (
-                     <Navigate to="/admin" />
-                   ) : (
-                     <LoginAdmin />
-                   )
-                 }
-               />
-               {/* MIS PEDIDOS - Solo clientes logueados */}
-               <Route
-                 path="/mis-pedidos"
-                 element={
-                   usuario && usuario.rol !== "admin" ? (
-                     <MisPedidos />
-                   ) : (
-                     <Navigate to="/tienda" />
-                   )
-                 }
-               />
-               <Route path="/tienda" element={<MenuBebidas />} />
-               {/* PANEL ADMIN - Solo admin */}
-               <Route
-                 path="/admin"
-                 element={
-                   usuario && usuario.rol === "admin" ? (
-                     <>
-                       <h2 className="text-3xl font-bold text-center mb-6 text-[#CDC7BD]">
-                         Panel de Administración
-                       </h2>
-                       <BebidasForm
-                         onSubmit={editing ? handleEdit : handleAdd}
-                         bebidaEditar={editing}
-                       />
-                       <BebidasList
-                         bebidas={bebidas}
-                         onEdit={setEditing}
-                         onDelete={handleDelete}
-                       />
-                     </>
-                   ) : (
-                     <Navigate to="/login-admin" />
-                   )
-                 }
-               />
-               {/* PEDIDOS ADMIN - Solo admin */}
-               <Route
-                 path="/admin-pedidos"
-                 element={
-                   usuario && usuario.rol === "admin" ? (
-                     <AdminPedidos />
-                   ) : (
-                     <Navigate to="/login-admin" />
-                   )
-                 }
-               />
-               <Route
-                 path="/pedido"
-                 element={usuario ? <Pedido /> : <Navigate to="/login" />}
-               />
-             </Routes>
-           </div>
-           <Footer />
-           <Toaster position="top-right" />
-         </div>
-       </CarritoProvider>
-     </BebidasProvider>
-   </Router>
- );
-  
+          <Route path="/tienda" element={<MenuBebidas />} />
+
+          <Route
+            path="/admin"
+            element={
+              usuario && usuario.rol === "admin" ? (
+                <>
+                  <h2 className="text-3xl font-bold text-center mb-6 text-[#CDC7BD]">
+                    Panel de Administración
+                  </h2>
+                  <BebidasForm
+                    onSubmit={editing ? handleEdit : handleAdd}
+                    bebidaEditar={editing}
+                  />
+                  <BebidasList
+                    bebidas={bebidas}
+                    onEdit={setEditing}
+                    onDelete={handleDelete}
+                    showStock={true}
+                  />
+                </>
+              ) : (
+                <Navigate to="/login-admin" />
+              )
+            }
+          />
+
+          <Route
+            path="/admin-pedidos"
+            element={
+              usuario && usuario.rol === "admin" ? (
+                <AdminPedidos />
+              ) : (
+                <Navigate to="/login-admin" />
+              )
+            }
+          />
+
+          <Route
+            path="/pedido"
+            element={usuario ? <Pedido /> : <Navigate to="/login" />}
+          />
+        </Routes>
+      </div>
+
+      {/* ✅ Footer solo si NO estamos en admin */}
+      {!ocultarFooter && <Footer />}
+
+      <Toaster position="top-right" />
+    </div>
+  );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Router>
+      <BebidasProvider>
+        <CarritoProvider>
+          <AppContent />
+        </CarritoProvider>
+      </BebidasProvider>
+    </Router>
+  );
+}
