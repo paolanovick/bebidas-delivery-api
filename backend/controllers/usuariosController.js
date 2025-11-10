@@ -52,7 +52,8 @@ export const loginUsuario = async (req, res) => {
     }
 
     res.json({
-      token: generarJWT(usuario._id),
+      token: generarJWT(usuario._id, usuario.rol),
+
       usuario: {
         id: usuario._id,
         nombre: usuario.nombre,
