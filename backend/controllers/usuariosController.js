@@ -1,7 +1,8 @@
 import Usuario from "../models/Usuario.js";
 import Pedido from "../models/Pedido.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { generarJWT } from "../helpers/generarJWT.js";
+
 
 // Registro de usuario
 export const registrarUsuario = async (req, res) => {

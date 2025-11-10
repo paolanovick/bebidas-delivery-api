@@ -6,6 +6,8 @@ import {
   eliminarHistorialUsuario,
 } from "../controllers/usuariosController.js";
 import { verificarToken } from "../middleware/auth.js";
+import { generarJWT } from "../helpers/generarJWT.js";
+
 
 const router = express.Router();
 
