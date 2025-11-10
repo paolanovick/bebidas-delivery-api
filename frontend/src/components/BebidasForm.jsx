@@ -93,6 +93,8 @@ const BebidasForm = ({ onSubmit, bebidaEditar }) => {
           <option value="">Seleccionar categoría</option>
           <option value="Vinos">Vinos</option>
           <option value="Cervezas">Cervezas</option>
+          <option value="Gaseosas">Gaseosas</option>
+          <option value="Jugos">Jugos</option>
           <option value="Espumantes">Espumantes</option>
           <option value="Whisky">Whisky</option>
           <option value="Blancas">Blancas</option>

@@ -16,6 +16,8 @@ export default function MenuBebidas() {
     "Todas",
     "Vinos",
     "Cervezas",
+    "Gaseosas",
+    "Jugos",
     "Espumantes",
     "Whisky",
     "Blancas",
