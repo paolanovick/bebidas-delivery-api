@@ -1,11 +1,10 @@
+// src/context/AuthContext.jsx
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { jwtDecode } from "jwt-decode";
-import { useCarrito } from "../context/CarritoContext"; // 👈 AÑADIDO
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const { vaciarCarrito } = useCarrito(); // 👈 AÑADIDO
   const [usuario, setUsuario] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -14,16 +13,14 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-
         if (decoded.exp * 1000 < Date.now()) {
           localStorage.removeItem("token");
           setUsuario(null);
           setLoading(false);
           return;
         }
-
         setUsuario(decoded);
-      } catch (error) {
+      } catch {
         localStorage.removeItem("token");
         setUsuario(null);
       }
@@ -38,8 +35,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    // 🔴 NO usamos useCarrito acá
     localStorage.removeItem("token");
-    vaciarCarrito(); // ✅ SE LIMPIA EL CARRITO AL CERRAR SESIÓN
+    localStorage.removeItem("carrito"); // limpia carrito persistido
+    window.dispatchEvent(new CustomEvent("carrito:updated")); // aviso opcional
     setUsuario(null);
   };
 

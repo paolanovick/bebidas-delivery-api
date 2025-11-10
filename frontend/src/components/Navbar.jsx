@@ -9,13 +9,12 @@ const Navbar = () => {
   // ✅ HOOKS SIEMPRE ARRIBA
   const location = useLocation();
   const { usuario, logout } = useAuth();
-  const { carrito } = useCarrito();
+  const { carrito, vaciarCarrito } = useCarrito();
   const total = carrito.reduce((sum, el) => sum + (el.cantidad || 0), 0);
   const [menuOpen, setMenuOpen] = useState(false);
 
   // ✅ OCULTAR NAV EN LA PORTADA NEGRA
-    if (location.pathname === "/" || location.pathname === "/inicio")
-      return null;
+  if (location.pathname === "/" || location.pathname === "/inicio") return null;
 
   return (
     <nav className="bg-[#04090C] shadow-lg text-[#FFFFFF]">
@@ -95,10 +94,13 @@ const Navbar = () => {
             </Link>
           )}
 
-          {/* Si hay usuario → Cerrar sesión */}
+          {/* ✅ Cerrar sesión (DESKTOP) — SOLO CAMBIO ESTO */}
           {usuario && (
             <button
-              onClick={logout}
+              onClick={() => {
+                vaciarCarrito();
+                logout();
+              }}
               className="px-4 py-2 rounded-md bg-[#590707] text-white font-semibold shadow-md hover:bg-[#A30404] transition duration-300"
             >
               Cerrar Sesión
@@ -139,7 +141,6 @@ const Navbar = () => {
 
           {menuOpen && (
             <div className="absolute right-0 mt-2 w-52 bg-[#04090C] shadow-lg rounded-md flex flex-col gap-2 p-4 z-50">
-              {/* Siempre mostrar Tienda */}
               <Link
                 to="/tienda"
                 onClick={() => setMenuOpen(false)}
@@ -148,7 +149,6 @@ const Navbar = () => {
                 Tienda
               </Link>
 
-              {/* Mis Pedidos si NO es admin */}
               {usuario && usuario.rol !== "admin" && (
                 <Link
                   to="/mis-pedidos"
@@ -159,7 +159,6 @@ const Navbar = () => {
                 </Link>
               )}
 
-              {/* Admin: Panel y Pedidos */}
               {usuario?.rol === "admin" && (
                 <>
                   <Link
@@ -179,7 +178,6 @@ const Navbar = () => {
                 </>
               )}
 
-              {/* 🛒 Carrito mobile */}
               <Link
                 to="/pedido"
                 onClick={() => setMenuOpen(false)}
@@ -193,7 +191,6 @@ const Navbar = () => {
                 )}
               </Link>
 
-              {/* Admin Login si no hay usuario */}
               {!usuario && (
                 <Link
                   to="/login-admin"
@@ -204,10 +201,11 @@ const Navbar = () => {
                 </Link>
               )}
 
-              {/* Cerrar sesión si hay usuario */}
+              {/* ✅ Cerrar sesión (MOBILE) — SOLO CAMBIO ESTO */}
               {usuario && (
                 <button
                   onClick={() => {
+                    vaciarCarrito();
                     logout();
                     setMenuOpen(false);
                   }}

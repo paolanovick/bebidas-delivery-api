@@ -47,10 +47,13 @@ export function CarritoProvider({ children }) {
   const eliminar = (id) => {
     guardarCarrito(carrito.filter((item) => (item._id || item.id) !== id));
   };
+  
 
   // ✅ NUEVO: Vaciar el carrito
   const vaciarCarrito = () => {
-    guardarCarrito([]); // ✅ Limpia todo
+    setCarrito([]); // limpia UI
+    localStorage.removeItem("carrito"); // limpia storage
+    window.dispatchEvent(new CustomEvent("carrito:updated"));
   };
 
   return (
