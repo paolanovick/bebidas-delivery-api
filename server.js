@@ -14,16 +14,18 @@ conectarDB();
 
 const app = express();
 app.use(express.json());
-// ✅ CORS CORRECTO Y COMPLETO
+
+// ✅ CORS
 app.use(
   cors({
-    origin: "*", // ✅ Permite cualquier dominio (necesario para Vercel)
+    origin: true,
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-
+app.options("*", cors());
 
 
 
