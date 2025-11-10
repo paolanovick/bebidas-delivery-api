@@ -48,9 +48,23 @@ export function CarritoProvider({ children }) {
     guardarCarrito(carrito.filter((item) => (item._id || item.id) !== id));
   };
 
+  // ✅ NUEVO: Vaciar el carrito
+  const vaciarCarrito = () => {
+    setCarrito([]);
+    localStorage.removeItem("carrito");
+    window.dispatchEvent(new CustomEvent("carrito:updated"));
+  };
+
   return (
     <CarritoContext.Provider
-      value={{ carrito, agregar, modificarCantidad, eliminar, guardarCarrito }}
+      value={{
+        carrito,
+        agregar,
+        modificarCantidad,
+        eliminar,
+        guardarCarrito,
+        vaciarCarrito, // 👈 LO EXPONEMOS
+      }}
     >
       {children}
     </CarritoContext.Provider>
