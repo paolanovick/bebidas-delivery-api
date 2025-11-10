@@ -13,7 +13,14 @@ dotenv.config();
 conectarDB();
 
 const app = express();
-app.use(express.json({ limit: "10mb" }));
+app.use(
+  cors({
+    origin: ["https://el-danes.vercel.app", "http://localhost:3000"], // ← tu dominio FRONT
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  })
+);
+
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // ✅ CORS
