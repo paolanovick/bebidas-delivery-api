@@ -1,5 +1,8 @@
 // src/services/api.js
-const BASE_URL = process.env.REACT_APP_API_URL || "https://el-danes-api.onrender.com/api";
+const BASE_URL =
+  (process.env.REACT_APP_API_URL || "https://el-danes-api.onrender.com") +
+  "/api";
+
 
 
 const API_URL_BEBIDAS = `${BASE_URL}/bebidas`;
