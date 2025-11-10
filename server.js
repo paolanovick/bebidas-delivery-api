@@ -17,15 +17,25 @@ const app = express();
 // ✅ CORS CORRECTO (solo este!)
 app.use(
   cors({
-    origin: [
-      "https://bebidas-delivery-2k1wtw3j7-paola-novicks-projects.vercel.app",
-      "http://localhost:3000",
-    ],
+    origin: (origin, callback) => {
+      // Permitir peticiones sin origen (ej: Postman, mobile)
+      if (!origin) return callback(null, true);
+
+      // Permitir cualquier dominio de Vercel
+      if (origin.endsWith(".vercel.app")) return callback(null, true);
+
+      // Permitir localhost para desarrollo
+      if (origin.includes("localhost")) return callback(null, true);
+
+      // Si no coincide → bloquear
+      return callback(new Error("No permitido por CORS"));
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
