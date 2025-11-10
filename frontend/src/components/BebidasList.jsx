@@ -21,17 +21,14 @@ const BebidasList = ({ bebidas, onEdit, onDelete, showStock = false }) => {
         Catálogo de Bebidas ({bebidas.length})
       </h3>
 
-      <table className="min-w-full bg-white border border-[#CDC7BD] rounded-xl shadow-lg">
+      <table className="min-w-full bg-white border border-[#CDC7BD] rounded-xl shadow-lg text-[#04090C]">
         <thead className="bg-[#590707] text-white">
           <tr>
             <th className="py-3 px-4 text-left">Imagen</th>
             <th className="py-3 px-4 text-left">Nombre</th>
             <th className="py-3 px-4 text-left">Categoría</th>
             <th className="py-3 px-4 text-left">Precio</th>
-
-            {/* ✅ Mostrar columna stock solo si showStock = true */}
             {showStock && <th className="py-3 px-4 text-left">Stock</th>}
-
             <th className="py-3 px-4 text-left">Acciones</th>
           </tr>
         </thead>
@@ -40,7 +37,7 @@ const BebidasList = ({ bebidas, onEdit, onDelete, showStock = false }) => {
           {bebidas.map((b) => (
             <tr
               key={b._id}
-              className="border-b hover:bg-[#F2ECE4] transition-colors text-[#04090C]"
+              className="border-b hover:bg-[#F2ECE4] transition-colors"
             >
               <td className="py-3 px-4">
                 <img
@@ -55,14 +52,8 @@ const BebidasList = ({ bebidas, onEdit, onDelete, showStock = false }) => {
               </td>
 
               <td className="py-3 px-4 font-semibold">{b.nombre}</td>
-
               <td className="py-3 px-4">{b.categoria}</td>
-
-              <td className="py-3 px-4">
-                ${new Intl.NumberFormat("es-AR").format(b.precio)}
-              </td>
-
-              {/* ✅ Mostrar el stock solo en admin */}
+              <td className="py-3 px-4">${b.precio}</td>
               {showStock && <td className="py-3 px-4">{b.stock ?? "-"}</td>}
 
               <td className="py-3 px-4 flex gap-2">

@@ -27,64 +27,46 @@ const Admin = () => {
     }
   };
 
-   useEffect(() => {
-     cargarBebidas();
-   }, []);
+  useEffect(() => {
+    cargarBebidas();
+  }, []);
 
-   const handleAdd = async (bebida) => {
-     try {
-       await agregarBebida(bebida);
-       await cargarBebidas();
-     } catch (error) {
-       console.error("Error al agregar bebida:", error);
-     }
-   };
+const handleAdd = async (bebida) => {
+  try {
+    await agregarBebida(bebida);
+    await cargarBebidas(); // ✅ refresca sin recargar la página
+  } catch (error) {
+    console.error("Error al agregar bebida:", error);
+  }
+};
 
-   const handleEdit = async (bebida) => {
-     try {
-       await editarBebida(editing._id, bebida);
-       await cargarBebidas();
-       setEditing(null);
-     } catch (error) {
-       console.error("Error al editar bebida:", error);
-     }
-   };
 
-   const handleDelete = async (id) => {
-     try {
-       await eliminarBebida(id);
-       setBebidas(bebidas.filter((b) => b._id !== id));
-     } catch (error) {
-       console.error("Error al eliminar bebida:", error);
-     }
-   };
+  const handleEdit = async (bebida) => {
+    try {
+      await editarBebida(editing._id, bebida);
+      await cargarBebidas(); // ✅ trae todo actualizado desde el servidor
+      setEditing(null);
+    } catch (error) {
+      console.error("Error al editar bebida:", error);
+    }
+  };
 
-   // ✅ Esto era lo que faltaba
-   const cambiarSeccion = (nuevaSeccion) => {
-     setSeccion(nuevaSeccion);
-     setMenuAbierto(false);
-   };
 
-   const fixStock = async () => {
-     const token = localStorage.getItem("token");
-     try {
-       const res = await fetch(
-         "https://el-danes-api.onrender.com/api/bebidas/fix-stock",
-         {
-           method: "PUT",
-           headers: { Authorization: `Bearer ${token}` },
-         }
-       );
-       const data = await res.json();
-       console.log("✅ Stock reparado:", data);
-       cargarBebidas();
-       alert("✅ Stock actualizado correctamente");
-     } catch (error) {
-       console.error("❌ Error al reparar stock:", error);
-       alert("❌ No se pudo actualizar el stock");
-     }
-   };
+  const handleDelete = async (id) => {
+    try {
+      await eliminarBebida(id);
+      setBebidas(bebidas.filter((b) => b._id !== id));
+    } catch (error) {
+      console.error("Error al eliminar bebida:", error);
+    }
+  };
+  
 
+  const cambiarSeccion = (nuevaSeccion) => {
+    setSeccion(nuevaSeccion);
+    setMenuAbierto(false);
+  };
+  
  
   return (
     <div className="flex min-h-screen bg-[#CDC7BD]">
@@ -122,12 +104,6 @@ const Admin = () => {
                 : "hover:bg-[#A30404] hover:shadow-md"
             }`}
           >
-            <button
-              onClick={fixStock}
-              className="mb-6 px-4 py-2 bg-[#590707] text-white rounded-lg hover:bg-[#A30404] transition shadow-lg"
-            >
-              🔧 Reparar stock faltante
-            </button>
             👥 Usuarios
           </button>
           <button
