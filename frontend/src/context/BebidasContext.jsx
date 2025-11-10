@@ -25,9 +25,10 @@ export const BebidasProvider = ({ children }) => {
   }, []);
 
   const agregar = async (bebida) => {
-    const nueva = await agregarBebida(bebida);
-    setBebidas((prev) => [...prev, nueva]);
+    await agregarBebida(bebida);
+    await cargarBebidas(); // ✅ Actualiza lista en pantalla SIN refrescar página
   };
+
 
   const editar = async (id, bebida) => {
     const actualizada = await editarBebida(id, bebida);
