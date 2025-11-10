@@ -12,6 +12,8 @@ const bebidaSchema = new mongoose.Schema({
     enum: [
       "Vinos",
       "Cervezas",
+      "Gaseosas",
+      "Jugos",
       "Espumantes",
       "Whisky",
       "Blancas",
