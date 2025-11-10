@@ -11,7 +11,7 @@ import {
   editarBebida,
   eliminarBebida,
 } from "../services/api";
-import toast from "react-hot-toast";
+
 
 
 const Admin = () => {
@@ -37,7 +37,7 @@ const handleAdd = async (bebida) => {
   try {
     await agregarBebida(bebida);
     await cargarBebidas();
-     toast.success("✅ Bebida agregada con éxito");// ✅ refresca sin recargar la página
+    // ✅ refresca sin recargar la página
   } catch (error) {
     console.error("Error al agregar bebida:", error);
   }
@@ -49,7 +49,7 @@ const handleAdd = async (bebida) => {
       await editarBebida(editing._id, bebida);
       await cargarBebidas(); // ✅ trae todo actualizado desde el servidor
       setEditing(null);
-        toast.success("✏️ Bebida editada correctamente");
+       
     } catch (error) {
       console.error("Error al editar bebida:", error);
     }
@@ -60,7 +60,7 @@ const handleAdd = async (bebida) => {
     try {
       await eliminarBebida(id);
       setBebidas(bebidas.filter((b) => b._id !== id));
-      toast.success("🗑️ Bebida eliminada con éxito");
+   
     } catch (error) {
       console.error("Error al eliminar bebida:", error);
     }

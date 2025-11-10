@@ -25,33 +25,45 @@ export const registrarUsuario = async (req, res) => {
 
 // Login de usuario/admin
 export const loginUsuario = async (req, res) => {
-  const { email, contrasena } = req.body;
-
   try {
+    const { email, contrasena } = req.body;
+
+    if (!email || !contrasena) {
+      return res
+        .status(400)
+        .json({ mensaje: "Todos los campos son obligatorios" });
+    }
+
     const usuario = await Usuario.findOne({ email });
-    if (!usuario)
-      return res.status(400).json({ mensaje: "Usuario no encontrado" });
 
-    const passwordValido = bcrypt.compareSync(contrasena, usuario.contrasena);
-    if (!passwordValido)
-      return res.status(400).json({ mensaje: "Contraseña incorrecta" });
+    if (!usuario) {
+      return res
+        .status(401)
+        .json({ mensaje: "Email o contraseña incorrectos" });
+    }
 
-    const token = jwt.sign(
-      {
+    const passwordCorrecta = await usuario.comprobarPassword(contrasena);
+
+    if (!passwordCorrecta) {
+      return res
+        .status(401)
+        .json({ mensaje: "Email o contraseña incorrectos" });
+    }
+
+    res.json({
+      token: generarJWT(usuario._id),
+      usuario: {
         id: usuario._id,
         nombre: usuario.nombre,
-        email: usuario.email,
         rol: usuario.rol,
       },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
-    );
-
-    res.json({ token, rol: usuario.rol });
+    });
   } catch (error) {
-    res.status(500).json({ mensaje: "Error al iniciar sesión", error });
+    console.log(error);
+    res.status(500).json({ mensaje: "Error en el servidor" });
   }
 };
+
 
 // Obtener usuarios con pedidos (solo admin)
 export const getUsuariosConPedidos = async (req, res) => {

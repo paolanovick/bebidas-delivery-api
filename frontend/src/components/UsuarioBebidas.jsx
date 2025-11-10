@@ -1,36 +1,22 @@
 import React from "react";
-//import { useNavigate } from "react-router-dom";
-//import { useAuth } from "../context/AuthContext";
 import { useCarrito } from "../context/CarritoContext";
 import { ShoppingCart } from "lucide-react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 export default function UsuarioBebidas({ bebidas }) {
- // const { usuario } = useAuth();
- // const navigate = useNavigate();
   const { agregar } = useCarrito();
 
   const agregarAlCarrito = (bebida) => {
-    //if (!usuario) {
-      //toast.warning("Debes iniciar sesión para comprar 🧑‍💻");
-      //setTimeout(() => navigate("/login"), 1200);
-      //return;
-   // }
-
     if (bebida.stock <= 0) {
-      toast.error(`❗ "${bebida.nombre}" está sin stock`);
+      alert(`❗ "${bebida.nombre}" está sin stock`);
       return;
     }
 
     agregar(bebida);
-    toast.success(`✅ ${bebida.nombre} agregado al carrito`);
+    alert(`✅ ${bebida.nombre} agregado al carrito`);
   };
 
   return (
     <div className="relative bg-[#CDC7BD] min-h-screen p-6">
-      <ToastContainer position="top-center" autoClose={1200} />
-
       <h1 className="text-4xl font-bold text-center mb-8 text-[#590707]">
         🍹 Catálogo de Bebidas
       </h1>

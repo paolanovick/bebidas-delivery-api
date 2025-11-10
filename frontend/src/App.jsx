@@ -22,7 +22,7 @@ import { CarritoProvider } from "./context/CarritoContext";
 import { BebidasProvider } from "./context/BebidasContext";
 import Inicio from "./pages/Inicio";
 import Footer from "./components/Footer";
-import { Toaster } from "react-hot-toast";
+
 import {
   getBebidas,
   agregarBebida,
@@ -174,7 +174,7 @@ function AppContent() {
       {/* ✅ Footer solo si NO estamos en admin */}
       {!ocultarFooter && <Footer />}
 
-      <Toaster position="top-right" />
+     
     </div>
   );
 }
