@@ -14,16 +14,19 @@ conectarDB();
 
 const app = express();
 
-// ✅ CORS
+// ✅ CORS CORRECTO Y COMPLETO
 app.use(
   cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: true,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-app.use(express.json());
+app.options("*", cors());
+
+
 
 // ✅ Rutas
 app.use("/api/bebidas", bebidasRoutes);
