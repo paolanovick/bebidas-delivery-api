@@ -111,23 +111,24 @@ export default function Pedido() {
     if (!usuario) return navigate("/login");
     if (!puedeConfirmar) return;
 
-    const pedido = {
-      usuarioId: usuario.id || usuario._id,
-      email,
-      items: carrito.map((i) => ({
-        bebida: i._id || i.id,
-        nombre: i.nombre || i.titulo,
-        precio: Number(i.precio) || 0,
-        cantidad: Number(i.cantidad) || 0,
-      })),
-      direccionEntrega: direccion,
-      telefono,
-      coordenadas,
-      fechaEntrega: fecha,
-      horaEntrega: hora,
-      notas: comentarios,
-      total,
-    };
+   const pedido = {
+     usuario: usuario ? usuario.id || usuario._id : null,
+     emailCliente: email,
+     items: carrito.map((i) => ({
+       bebida: i._id || i.id,
+       nombre: i.nombre || i.titulo,
+       precio: Number(i.precio) || 0,
+       cantidad: Number(i.cantidad) || 0,
+     })),
+     direccionEntrega: direccion,
+     telefono,
+     coordenadas,
+     fechaEntrega: fecha,
+     horaEntrega: hora,
+     notas: comentarios,
+     total,
+   };
+
 
     const ubicacion = coordenadas
       ? `https://www.google.com/maps?q=${coordenadas.lat},${coordenadas.lng}`
