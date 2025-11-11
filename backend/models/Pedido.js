@@ -4,9 +4,12 @@ const PedidoSchema = new mongoose.Schema({
   usuario: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Usuario",
-    required: true,
+    required: false, // ✅ Ahora compra sin estar logueado es posible
   },
-  email: { type: String, required: true }, // 👈 NUEVO CAMPO
+
+  // ✅ CAMPO CORRECTO PARA CLIENTE NO REGISTRADO
+  emailCliente: { type: String, required: true },
+
   items: [
     {
       bebida: {
@@ -19,12 +22,15 @@ const PedidoSchema = new mongoose.Schema({
       cantidad: { type: Number, required: true, min: 1 },
     },
   ],
+
   total: { type: Number, required: true },
+
   estado: {
     type: String,
     enum: ["pendiente", "confirmado", "enviado", "entregado", "cancelado"],
     default: "pendiente",
   },
+
   direccionEntrega: { type: String, required: true },
   telefono: String,
   notas: String,

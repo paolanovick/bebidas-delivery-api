@@ -8,18 +8,19 @@ import {
   eliminarTodosPedidos,
   eliminarHistorialUsuario,
 } from "../controllers/pedidosController.js";
-import { verificarToken } from "../middleware/auth.js"; // ← Importar verificarToken
+import { verificarToken } from "../middleware/auth.js";
 import esAdmin from "../middleware/esAdmin.js";
 
 const router = express.Router();
 
-// Rutas para usuarios autenticados
-router.post("/", verificarToken, crearPedido);
-router.get("/mis-pedidos", verificarToken, obtenerMisPedidos);
-router.delete("/:id", verificarToken, eliminarPedido);
-router.delete("/", verificarToken, eliminarTodosPedidos);
+// 🟢 Crear pedido (no requiere login)
+router.post("/", crearPedido);
 
-// Rutas solo para administradores
+// 🟢 Ver pedidos por email (no requiere login)
+// Ejemplo: GET /api/pedidos/mis-pedidos/cliente@email.com
+router.get("/mis-pedidos/:emailCliente", obtenerMisPedidos);
+
+// 🔐 Rutas solo para administradores
 router.get("/", verificarToken, esAdmin, listarTodosPedidos);
 router.put("/:id/estado", verificarToken, esAdmin, actualizarEstadoPedido);
 router.delete(

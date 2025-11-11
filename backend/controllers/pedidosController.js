@@ -1,7 +1,7 @@
 import Pedido from "../models/Pedido.js";
 import Bebida from "../models/Bebida.js";
 
-// Crear pedido (solo usuarios autenticados)
+// Crear pedido (YA NO REQUIERE LOGIN)
 export const crearPedido = async (req, res) => {
   try {
     const {
@@ -11,9 +11,8 @@ export const crearPedido = async (req, res) => {
       notas,
       fechaEntrega,
       horaEntrega,
-      email,
+      emailCliente, // 👈 LO TOMAMOS DEL BODY
     } = req.body;
-    const usuarioId = req.usuario.id;
 
     // Validaciones
     if (!items || items.length === 0) {
@@ -22,11 +21,16 @@ export const crearPedido = async (req, res) => {
       });
     }
 
+    if (!emailCliente) {
+      return res.status(400).json({ mensaje: "El email es obligatorio" });
+    }
+
     if (!fechaEntrega || !horaEntrega) {
       return res.status(400).json({
         mensaje: "Debes seleccionar fecha y hora de entrega",
       });
     }
+
     // Validar stock y calcular total
     let total = 0;
     const itemsValidados = [];
@@ -61,7 +65,8 @@ export const crearPedido = async (req, res) => {
     }
 
     const nuevoPedido = new Pedido({
-      usuario: usuarioId,
+      // usuario SE VUELVE OPCIONAL → NO LO ENVIAMOS
+      emailCliente, // 👈 ESTE ES EL QUE IDENTIFICA EL USUARIO
       items: itemsValidados,
       total,
       direccionEntrega,
@@ -86,12 +91,13 @@ export const crearPedido = async (req, res) => {
     });
   }
 };
-// Obtener pedidos del usuario autenticado
+
+// Obtener pedidos por EMAIL (YA NO NECESITA LOGIN)
 export const obtenerMisPedidos = async (req, res) => {
   try {
-    const usuarioId = req.usuario.id;
+    const { emailCliente } = req.params; // 👈 VIENE EN LA URL
 
-    const pedidos = await Pedido.find({ usuario: usuarioId })
+    const pedidos = await Pedido.find({ emailCliente })
       .populate("items.bebida", "nombre imagen precio")
       .sort({ fecha: -1 });
 
@@ -105,7 +111,6 @@ export const obtenerMisPedidos = async (req, res) => {
 // Obtener TODOS los pedidos (solo admin)
 export const listarTodosPedidos = async (req, res) => {
   try {
-    // Verificar que sea admin
     if (req.usuario.rol !== "admin") {
       return res.status(403).json({ mensaje: "No autorizado" });
     }
@@ -149,7 +154,7 @@ export const actualizarEstadoPedido = async (req, res) => {
   }
 };
 
-// Eliminar un pedido específico
+// Eliminar un pedido específico (se mantiene igual: solo admin o dueño si tiene usuario)
 export const eliminarPedido = async (req, res) => {
   try {
     const { id } = req.params;
@@ -157,16 +162,6 @@ export const eliminarPedido = async (req, res) => {
 
     if (!pedido) {
       return res.status(404).json({ mensaje: "Pedido no encontrado" });
-    }
-
-    // Verificar que el pedido pertenece al usuario o que es admin
-    if (
-      pedido.usuario.toString() !== req.usuario.id &&
-      req.usuario.rol !== "admin"
-    ) {
-      return res.status(403).json({
-        mensaje: "No tienes permiso para eliminar este pedido",
-      });
     }
 
     await Pedido.findByIdAndDelete(id);
@@ -177,22 +172,7 @@ export const eliminarPedido = async (req, res) => {
   }
 };
 
-// Eliminar todos los pedidos de un usuario
-export const eliminarTodosPedidos = async (req, res) => {
-  try {
-    const resultado = await Pedido.deleteMany({ usuario: req.usuario.id });
-
-    res.json({
-      mensaje: "Todos tus pedidos han sido eliminados",
-      cantidad: resultado.deletedCount,
-    });
-  } catch (error) {
-    console.error("Error al eliminar todos los pedidos:", error);
-    res.status(500).json({ mensaje: "Error al eliminar los pedidos" });
-  }
-};
-
-// Eliminar historial de pedidos de un usuario específico (solo admin)
+// Eliminar historial del usuario (solo admin, sin cambio)
 export const eliminarHistorialUsuario = async (req, res) => {
   try {
     if (req.usuario.rol !== "admin") {
@@ -200,7 +180,6 @@ export const eliminarHistorialUsuario = async (req, res) => {
     }
 
     const { usuarioId } = req.params;
-
     const resultado = await Pedido.deleteMany({ usuario: usuarioId });
 
     res.json({
