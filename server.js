@@ -18,23 +18,27 @@ const app = express();
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Permitir peticiones sin origen (ej: Postman, mobile)
       if (!origin) return callback(null, true);
 
-      // Permitir cualquier dominio de Vercel
-      if (origin.endsWith(".vercel.app")) return callback(null, true);
+      const permitidos = [
+        "https://www.eldanes.online",
+        "https://eldanes.online"
+      ];
 
-      // Permitir localhost para desarrollo
+      // Permitir Vercel y localhost
+      if (origin.endsWith(".vercel.app")) return callback(null, true);
       if (origin.includes("localhost")) return callback(null, true);
 
-      // Si no coincide → bloquear
-      return callback(new Error("No permitido por CORS"));
+      // Permitir dominio nuevo
+      if (permitidos.includes(origin)) return callback(null, true);
+
+      return callback(new Error("No permitido por CORS: " + origin));
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+
 
 
 app.use(express.json({ limit: "10mb" }));
