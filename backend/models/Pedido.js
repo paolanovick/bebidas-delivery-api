@@ -6,6 +6,7 @@ const PedidoSchema = new mongoose.Schema({
     ref: "Usuario",
     required: true,
   },
+  email: { type: String, required: true }, // 👈 NUEVO CAMPO
   items: [
     {
       bebida: {
@@ -29,10 +30,8 @@ const PedidoSchema = new mongoose.Schema({
   notas: String,
   fecha: { type: Date, default: Date.now },
 
-  // NUEVOS CAMPOS PARA HORARIO DE ENTREGA
-  fechaEntrega: { type: Date, required: true }, // Fecha seleccionada por el usuario
-  horaEntrega: { type: String, required: true }, // Ej: "14:00 - 15:00"
+  fechaEntrega: { type: Date, required: true },
+  horaEntrega: { type: String, required: true },
 });
 
 export default mongoose.model("Pedido", PedidoSchema, "pedidos");
-

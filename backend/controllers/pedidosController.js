@@ -11,6 +11,7 @@ export const crearPedido = async (req, res) => {
       notas,
       fechaEntrega,
       horaEntrega,
+      email,
     } = req.body;
     const usuarioId = req.usuario.id;
 
