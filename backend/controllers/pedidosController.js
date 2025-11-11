@@ -11,25 +11,25 @@ export const crearPedido = async (req, res) => {
       notas,
       fechaEntrega,
       horaEntrega,
-      email, // 👈 ahora viene desde el frontend
+      emailCliente, // ✅ AHORA LO TOMAMOS DE LA REQUEST
     } = req.body;
 
+    const usuarioId = req.usuario?.id || null; // ✅ Si no está logueado queda en null
+
     if (!items || items.length === 0) {
-      return res.status(400).json({
-        mensaje: "Debes agregar al menos una bebida al pedido",
-      });
+      return res
+        .status(400)
+        .json({ mensaje: "Debes agregar bebidas al pedido" });
     }
 
-    if (!email) {
-      return res.status(400).json({
-        mensaje: "Debes ingresar un email de contacto",
-      });
+    if (!emailCliente) {
+      return res.status(400).json({ mensaje: "El email es obligatorio" });
     }
 
     if (!fechaEntrega || !horaEntrega) {
-      return res.status(400).json({
-        mensaje: "Debes seleccionar fecha y hora de entrega",
-      });
+      return res
+        .status(400)
+        .json({ mensaje: "Debes seleccionar fecha y hora de entrega" });
     }
 
     let total = 0;
@@ -38,16 +38,13 @@ export const crearPedido = async (req, res) => {
     for (const item of items) {
       const bebida = await Bebida.findById(item.bebida);
 
-      if (!bebida) {
-        return res.status(404).json({
-          mensaje: `Bebida no encontrada`,
-        });
-      }
+      if (!bebida)
+        return res.status(404).json({ mensaje: "Bebida no encontrada" });
 
       if (bebida.stock < item.cantidad) {
-        return res.status(400).json({
-          mensaje: `Stock insuficiente para ${bebida.nombre}`,
-        });
+        return res
+          .status(400)
+          .json({ mensaje: `Stock insuficiente para ${bebida.nombre}` });
       }
 
       bebida.stock -= item.cantidad;
@@ -64,8 +61,8 @@ export const crearPedido = async (req, res) => {
     }
 
     const nuevoPedido = new Pedido({
-      usuario: null, // 👈 ahora permite pedidos sin login
-      email,
+      usuario: usuarioId,
+      emailCliente, // ✅ GUARDADO EN LA BD
       items: itemsValidados,
       total,
       direccionEntrega,
@@ -78,15 +75,11 @@ export const crearPedido = async (req, res) => {
     await nuevoPedido.save();
     await nuevoPedido.populate("items.bebida", "nombre imagen");
 
-    res.status(201).json({
-      mensaje: "Pedido creado exitosamente",
-      pedido: nuevoPedido,
-    });
+    res
+      .status(201)
+      .json({ mensaje: "Pedido creado exitosamente", pedido: nuevoPedido });
   } catch (error) {
     console.error("Error al crear pedido:", error);
-    res.status(500).json({
-      mensaje: "Error al crear pedido",
-      error: error.message,
-    });
+    res.status(500).json({ mensaje: "Error al crear pedido" });
   }
 };
