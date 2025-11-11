@@ -1,7 +1,7 @@
 import Pedido from "../models/Pedido.js";
 import Bebida from "../models/Bebida.js";
 
-// Crear pedido (YA NO REQUIERE LOGIN)
+// Crear pedido (sin necesidad de usuario logueado)
 export const crearPedido = async (req, res) => {
   try {
     const {
@@ -11,18 +11,19 @@ export const crearPedido = async (req, res) => {
       notas,
       fechaEntrega,
       horaEntrega,
-      emailCliente, // 👈 LO TOMAMOS DEL BODY
+      email, // 👈 ahora viene desde el frontend
     } = req.body;
 
-    // Validaciones
     if (!items || items.length === 0) {
       return res.status(400).json({
         mensaje: "Debes agregar al menos una bebida al pedido",
       });
     }
 
-    if (!emailCliente) {
-      return res.status(400).json({ mensaje: "El email es obligatorio" });
+    if (!email) {
+      return res.status(400).json({
+        mensaje: "Debes ingresar un email de contacto",
+      });
     }
 
     if (!fechaEntrega || !horaEntrega) {
@@ -31,7 +32,6 @@ export const crearPedido = async (req, res) => {
       });
     }
 
-    // Validar stock y calcular total
     let total = 0;
     const itemsValidados = [];
 
@@ -50,7 +50,6 @@ export const crearPedido = async (req, res) => {
         });
       }
 
-      // Actualizar stock
       bebida.stock -= item.cantidad;
       await bebida.save();
 
@@ -65,8 +64,8 @@ export const crearPedido = async (req, res) => {
     }
 
     const nuevoPedido = new Pedido({
-      // usuario SE VUELVE OPCIONAL → NO LO ENVIAMOS
-      emailCliente, // 👈 ESTE ES EL QUE IDENTIFICA EL USUARIO
+      usuario: null, // 👈 ahora permite pedidos sin login
+      email,
       items: itemsValidados,
       total,
       direccionEntrega,
@@ -89,105 +88,5 @@ export const crearPedido = async (req, res) => {
       mensaje: "Error al crear pedido",
       error: error.message,
     });
-  }
-};
-
-// Obtener pedidos por EMAIL (YA NO NECESITA LOGIN)
-export const obtenerMisPedidos = async (req, res) => {
-  try {
-    const { emailCliente } = req.params; // 👈 VIENE EN LA URL
-
-    const pedidos = await Pedido.find({ emailCliente })
-      .populate("items.bebida", "nombre imagen precio")
-      .sort({ fecha: -1 });
-
-    res.json(pedidos);
-  } catch (error) {
-    console.error("Error al obtener pedidos:", error);
-    res.status(500).json({ mensaje: "Error al obtener pedidos" });
-  }
-};
-
-// Obtener TODOS los pedidos (solo admin)
-export const listarTodosPedidos = async (req, res) => {
-  try {
-    if (req.usuario.rol !== "admin") {
-      return res.status(403).json({ mensaje: "No autorizado" });
-    }
-
-    const pedidos = await Pedido.find()
-      .populate("usuario", "nombre email")
-      .populate("items.bebida", "nombre precio imagen")
-      .sort({ fecha: -1 });
-
-    res.json(pedidos);
-  } catch (error) {
-    console.error("Error al listar pedidos:", error);
-    res.status(500).json({ mensaje: "Error al listar pedidos" });
-  }
-};
-
-// Actualizar estado del pedido (solo admin)
-export const actualizarEstadoPedido = async (req, res) => {
-  try {
-    if (req.usuario.rol !== "admin") {
-      return res.status(403).json({ mensaje: "No autorizado" });
-    }
-
-    const { id } = req.params;
-    const { estado } = req.body;
-
-    const pedido = await Pedido.findByIdAndUpdate(
-      id,
-      { estado },
-      { new: true }
-    );
-
-    if (!pedido) {
-      return res.status(404).json({ mensaje: "Pedido no encontrado" });
-    }
-
-    res.json({ mensaje: "Estado actualizado", pedido });
-  } catch (error) {
-    console.error("Error al actualizar pedido:", error);
-    res.status(500).json({ mensaje: "Error al actualizar pedido" });
-  }
-};
-
-// Eliminar un pedido específico (se mantiene igual: solo admin o dueño si tiene usuario)
-export const eliminarPedido = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const pedido = await Pedido.findById(id);
-
-    if (!pedido) {
-      return res.status(404).json({ mensaje: "Pedido no encontrado" });
-    }
-
-    await Pedido.findByIdAndDelete(id);
-    res.json({ mensaje: "Pedido eliminado exitosamente" });
-  } catch (error) {
-    console.error("Error al eliminar pedido:", error);
-    res.status(500).json({ mensaje: "Error al eliminar el pedido" });
-  }
-};
-
-// Eliminar historial del usuario (solo admin, sin cambio)
-export const eliminarHistorialUsuario = async (req, res) => {
-  try {
-    if (req.usuario.rol !== "admin") {
-      return res.status(403).json({ mensaje: "No autorizado" });
-    }
-
-    const { usuarioId } = req.params;
-    const resultado = await Pedido.deleteMany({ usuario: usuarioId });
-
-    res.json({
-      mensaje: "Historial eliminado exitosamente",
-      cantidad: resultado.deletedCount,
-    });
-  } catch (error) {
-    console.error("Error al eliminar historial:", error);
-    res.status(500).json({ mensaje: "Error al eliminar el historial" });
   }
 };
